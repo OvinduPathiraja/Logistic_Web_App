@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shipment Table</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      position: sticky;
+      top: 0;
+    }
+
+    tbody tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .container {
+      padding: 20px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Shipment Details</h1>
+    <table id="shipmentTable">
+      <thead>
+        <tr>
+          <th>Shipment Number</th>
+          <th>Client Name</th>
+          <th>Status</th>
+          <th>Transport Method</th>
+          <th>Country Shipped From</th>
+          <th>Package Cost</th>
+          <th>Logistic Cost</th>
+          <th>Transportation Cost</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Rows will be inserted here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function fetchAndRenderShipments() {
+      try {
+        const response = await fetch('https://cors-anywhere.herokuapp.com/https://xa4rzy5lkg.execute-api.eu-north-1.amazonaws.com/prod');
+        const data = await response.json();
+
+        const shipments = JSON.parse(data.body);
+
+        const tbody = document.getElementById('tableBody');
+
+        shipments.forEach(shipment => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${shipment["Shipment Number"]}</td>
+            <td>${shipment["Client Name"]}</td>
+            <td>${shipment["Status"]}</td>
+            <td>${shipment["Transport Method"]}</td>
+            <td>${shipment["Country Shipped From"]}</td>
+            <td>$${shipment["Package Cost"]}</td>
+            <td>$${shipment["Logistic Cost"]}</td>
+            <td>$${shipment["Transportation Cost"]}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+      } catch (error) {
+        console.error('Failed to fetch shipment data:', error);
+      }
+    }
+
+    fetchAndRenderShipments();
+  </script>
+</body>
+</html>
